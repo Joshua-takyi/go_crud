@@ -14,7 +14,7 @@ import (
 func Router() *gin.Engine {
 	router := gin.Default()
 
-	if err := godotenv.Load(".env.local"); err != nil {
+	if err := godotenv.Load("../.env.local"); err != nil {
 		fmt.Printf("Warning: Failed to load .env.local file: %v\n", err)
 		fmt.Println("This is expected in production environments where environment variables are set differently")
 	}

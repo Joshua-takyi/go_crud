@@ -20,7 +20,6 @@ func main() {
 		}
 	}()
 
-	// Initialize the router with all routes and middleware
 	r := router.Router()
 
 	// Get port from environment variable for cloud deployment compatibility
