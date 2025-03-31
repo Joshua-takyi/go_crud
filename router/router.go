@@ -16,23 +16,26 @@ import (
 func Router() *gin.Engine {
 	router := gin.Default()
 
-	// cors
-
+	// Load environment variables from .env.local file
 	if err := godotenv.Load(".env.local"); err != nil {
 		fmt.Printf("Warning: Failed to load .env.local file: %v\n", err)
 	}
 
+	// Get frontend URL from environment variables
 	frontendUrl := os.Getenv("FRONTEND_URL")
 	if frontendUrl == "" {
 		frontendUrl = "http://localhost:3000" // Default to localhost if not set
+		fmt.Println("FRONTEND_URL not set, using default:", frontendUrl)
 	}
 
+	// Configure CORS middleware with proper settings
 	router.Use(cors.New(cors.Config{
-		AllowAllOrigins: false,
-		AllowOrigins:    []string{frontendUrl},
-		AllowMethods:    []string{"GET", "POST", "PATCH", "DELETE"},
-		AllowHeaders:    []string{"Origin", "Content-Type", "Accept"},
-		ExposeHeaders:   []string{"Content-Length"},
+		AllowOrigins:     []string{frontendUrl},
+		AllowMethods:     []string{"GET", "POST", "PATCH", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           86400, // Maximum cache time for preflight requests (in seconds)
 	}))
 
 	// Define the routes for the task management API
