@@ -14,6 +14,13 @@ func main() {
 		return
 	}
 
+	// Ensure the MongoDB connection is closed when the application exits
+	defer func() {
+		if err := connection.Close(); err != nil {
+			fmt.Println(err.Error())
+		}
+	}()
+
 	r := router.Router()
 	fmt.Println("server starting on port 8080")
 	if err := r.Run(":8080"); err != nil {
@@ -21,13 +28,7 @@ func main() {
 		fmt.Println(err.Error())
 		return
 	}
-	defer func() {
-		if err := connection.Close(connection.Client); err != nil {
-			fmt.Println(err.Error())
-		}
-	}()
 
-	// if the server starts successfully we return a success message
+	// Note: This line will never be reached because r.Run() blocks until the server is stopped
 	fmt.Println("server started successfully on port 8080")
-
 }
