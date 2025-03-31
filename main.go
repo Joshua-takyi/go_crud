@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/joshua-takyi/todo/connection"
 	"github.com/joshua-takyi/todo/router"
@@ -9,26 +10,34 @@ import (
 
 func main() {
 	if err := connection.Init(); err != nil {
-		// if connection fails we return an error message and exit the program
-		fmt.Println(err.Error())
+		fmt.Println("Database connection error:", err.Error())
 		return
 	}
 
-	// Ensure the MongoDB connection is closed when the application exits
 	defer func() {
 		if err := connection.Close(); err != nil {
-			fmt.Println(err.Error())
+			fmt.Println("Error closing database connection:", err.Error())
 		}
 	}()
 
+	// Initialize the router with all routes and middleware
 	r := router.Router()
-	fmt.Println("server starting on port 8080")
-	if err := r.Run(":8080"); err != nil {
-		// if the server fails to start we return an error message and exit the program
-		fmt.Println(err.Error())
-		return
+
+	// Get port from environment variable for cloud deployment compatibility
+	// Platforms like Render typically provide the port via the PORT environment variable
+	port := os.Getenv("PORT")
+	if port == "" {
+		// Default to port 8080 for local development
+		port = "8080"
 	}
 
-	// Note: This line will never be reached because r.Run() blocks until the server is stopped
-	fmt.Println("server started successfully on port 8080")
+	// Log server startup information
+	fmt.Printf("Server starting on port %s\n", port)
+
+	// Start the HTTP server with the configured port
+	// Run() blocks until the server is stopped or an error occurs
+	if err := r.Run(":" + port); err != nil {
+		fmt.Println("Server startup error:", err.Error())
+		return
+	}
 }
