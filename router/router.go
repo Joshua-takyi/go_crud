@@ -1,10 +1,12 @@
 package router
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/joshua-takyi/todo/task"
 )
 
@@ -15,6 +17,11 @@ func Router() *gin.Engine {
 	router := gin.Default()
 
 	// cors
+
+	if err := godotenv.Load(".env.local"); err != nil {
+		fmt.Printf("Warning: Failed to load .env.local file: %v\n", err)
+	}
+
 	frontendUrl := os.Getenv("FRONTEND_URL")
 	if frontendUrl == "" {
 		frontendUrl = "http://localhost:3000" // Default to localhost if not set

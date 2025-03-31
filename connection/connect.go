@@ -23,7 +23,6 @@ var (
 func Init() error {
 	// Load environment variables from .env.local file
 	if err := godotenv.Load(".env.local"); err != nil {
-		// We log but don't return - missing .env file is ok if env vars are set another way
 		fmt.Printf("Warning: Failed to load .env.local file: %v\n", err)
 	}
 
